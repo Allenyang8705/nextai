@@ -1,0 +1,200 @@
+<!--pages/settings/settings.wxml-->
+<view class="settings-container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="user-avatar-container" bindtap="chooseAvatar">
+      <image wx:if="{{userInfo.avatarUrl}}" class="user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="user-avatar">👤</view>
+      <view class="avatar-edit">📷</view>
+    </view>
+    <view class="user-info">
+      <text class="user-name">{{userInfo.phone || userInfo.email || '未登录'}}</text>
+      <text class="user-desc">{{userInfo.email ? userInfo.email : ''}}</text>
+    </view>
+  </view>
+
+  <!-- 设置列表 -->
+  <view class="settings-list">
+
+    <!-- 账号管理 -->
+    <view class="settings-group">
+      <view class="group-title">账号管理</view>
+      <view class="settings-item" bindtap="changePassword">
+        <view class="item-left">
+          <text class="item-icon">🔐</text>
+          <text class="item-label">修改密码</text>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+      <view class="settings-item" bindtap="handleLogout">
+        <view class="item-left">
+          <text class="item-icon">🚪</text>
+          <text class="item-label">退出登录</text>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 飞书文档同步 -->
+    <view class="settings-group">
+      <view class="group-title">飞书文档同步</view>
+      <view class="settings-item" bindtap="goToFeishuSettings">
+        <view class="item-left">
+          <text class="item-icon">📄</text>
+          <view class="item-label-column">
+            <text class="item-label">同步设置</text>
+            <text class="item-desc">{{feishuConfigured ? '已配置' : '未配置'}}</text>
+          </view>
+        </view>
+        <view class="item-right">
+          <view wx:if="{{feishuEnabled}}" class="status-badge success">
+            <text>✓ 已连接</text>
+          </view>
+          <text class="item-arrow">›</text>
+        </view>
+      </view>
+      <view wx:if="{{feishuConfigured}}" class="settings-item">
+        <view class="item-left">
+          <text class="item-icon">🔄</text>
+          <view class="item-label-column">
+            <text class="item-label">最后同步</text>
+            <text class="item-desc">{{lastSyncAt || '未同步'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 语音设置 -->
+    <view class="settings-group">
+      <view class="group-title">语音设置</view>
+      <view class="settings-item">
+        <view class="item-left">
+          <text class="item-icon">🎵</text>
+          <text class="item-label">语音质量</text>
+        </view>
+        <view class="item-right">
+          <picker
+            mode="selector"
+            range="{{qualityOptions}}"
+            range-key="label"
+            value="{{qualityIndex}}"
+            bindchange="onQualityChange"
+          >
+            <view class="picker-value">{{qualityOptions[qualityIndex].label}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="settings-item">
+        <view class="item-left">
+          <text class="item-icon">🔊</text>
+          <text class="item-label">播放模式</text>
+        </view>
+        <view class="item-right">
+          <picker
+            mode="selector"
+            range="{{playModeOptions}}"
+            range-key="label"
+            value="{{playModeIndex}}"
+            bindchange="onPlayModeChange"
+          >
+            <view class="picker-value">{{playModeOptions[playModeIndex].label}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 存储管理 -->
+    <view class="settings-group">
+      <view class="group-title">存储管理</view>
+      <view class="settings-item" bindtap="clearCache">
+        <view class="item-left">
+          <text class="item-icon">💾</text>
+          <view class="item-label-column">
+            <text class="item-label">清理缓存</text>
+            <text class="item-desc">当前缓存：{{cacheSize}}</text>
+          </view>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+      <view class="settings-item">
+        <view class="item-left">
+          <text class="item-icon">☁️</text>
+          <view class="item-label-column">
+            <text class="item-label">云端存储</text>
+            <text class="item-desc">已使用：{{storageUsed}}</text>
+          </view>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 关于 -->
+    <view class="settings-group">
+      <view class="group-title">关于</view>
+      <view class="settings-item" bindtap="showHelp">
+        <view class="item-left">
+          <text class="item-icon">❓</text>
+          <text class="item-label">使用帮助</text>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+      <view class="settings-item" bindtap="showPrivacy">
+        <view class="item-left">
+          <text class="item-icon">🔒</text>
+          <text class="item-label">隐私政策</text>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+      <view class="settings-item">
+        <view class="item-left">
+          <text class="item-icon">ℹ️</text>
+          <text class="item-label">版本信息</text>
+        </view>
+        <text class="item-desc">v1.0.0</text>
+      </view>
+    </view>
+
+  </view>
+</view>
+
+<!-- 修改密码弹窗 -->
+<view wx:if="{{showPasswordModal}}" class="modal-mask" bindtap="hidePasswordModal">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-title">修改密码</view>
+
+    <view class="input-group">
+      <input
+        class="modal-input"
+        type="password"
+        placeholder="原密码"
+        value="{{passwordForm.old}}"
+        bindinput="onOldPasswordInput"
+      />
+    </view>
+    <view class="input-group">
+      <input
+        class="modal-input"
+        type="password"
+        placeholder="新密码（至少8位，含字母和数字）"
+        value="{{passwordForm.new}}"
+        bindinput="onNewPasswordInput"
+      />
+    </view>
+    <view class="input-group">
+      <input
+        class="modal-input"
+        type="password"
+        placeholder="确认新密码"
+        value="{{passwordForm.confirm}}"
+        bindinput="onConfirmPasswordInput"
+      />
+    </view>
+
+    <view class="modal-actions">
+      <button class="btn-secondary" bindtap="hidePasswordModal">取消</button>
+      <button class="btn-primary" bindtap="submitPassword" disabled="{{passwordSubmitting}}">
+        {{passwordSubmitting ? '提交中...' : '确认'}}
+      </button>
+    </view>
+  </view>
+</view>

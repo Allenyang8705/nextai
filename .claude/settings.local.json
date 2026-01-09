@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(npm run db:migrate:*)",
+      "Bash(echo:*)",
+      "Bash(npm run dev)",
+      "Bash(ipconfig:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(cat:*)",
+      "Bash(wmic:*)",
+      "Bash(npx tsx:*)",
+      "Bash(mysql:*)"
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+<!--pages/index/index.wxml-->
+<view class="index-container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="header-title">语音记录</text>
+    <view class="header-right" bindtap="goToSettings">
+      <text class="icon-settings">⚙️</text>
+    </view>
+  </view>
+
+  <!-- 语音列表 -->
+  <scroll-view
+    class="record-list"
+    scroll-y="{{true}}"
+    bindscrolltolower="loadMore"
+    lower-threshold="{{100}}"
+  >
+    <view wx:if="{{loading && list.length === 0}}" class="loading">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{list.length === 0}}" class="empty">
+      <text class="empty-icon">🎤</text>
+      <text class="empty-text">还没有语音记录</text>
+      <text class="empty-hint">按住下方按钮开始录音</text>
+    </view>
+
+    <view wx:else>
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="record-item"
+        bindtap="playRecord"
+        data-id="{{item.id}}"
+        data-url="{{item.audioUrl}}"
+      >
+        <!-- 播放按钮 -->
+        <view class="record-play">
+          <view wx:if="{{playingId === item.id}}" class="wave-animation">
+            <view class="wave-bar"></view>
+            <view class="wave-bar"></view>
+            <view class="wave-bar"></view>
+          </view>
+          <text wx:else class="play-icon">▶️</text>
+        </view>
+
+        <!-- 记录信息 -->
+        <view class="record-info">
+          <view class="record-header">
+            <text class="record-time">{{item.timeStr}}</text>
+            <text class="record-duration">{{item.durationStr}}</text>
+          </view>
+
+          <!-- 转写文字 -->
+          <view wx:if="{{item.asrStatus === 'pending'}}" class="record-text pending">
+            正在识别中...
+          </view>
+          <view wx:elif="{{item.asrStatus === 'processing'}}" class="record-text processing">
+            <text class="loading-icon">🔄</text> 正在识别中...
+          </view>
+          <view wx:elif="{{item.asrStatus === 'failed'}}" class="record-text failed">
+            识别失败
+          </view>
+          <view wx:else class="record-text">
+            {{item.transcription || '暂无转写文字'}}
+          </view>
+        </view>
+
+        <!-- 更多操作 -->
+        <view class="record-more" catchtap="showMore" data-id="{{item.id}}">
+          <text>⋯</text>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view wx:if="{{loadingMore}}" class="loading">
+        <text>加载更多...</text>
+      </view>
+
+      <view wx:elif="{{!hasMore}}" class="no-more">
+        <text>没有更多了</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部录音按钮 -->
+  <view class="record-footer">
+    <view class="record-content">
+      <!-- 录音时长 -->
+      <view wx:if="{{recording}}" class="record-duration-show">
+        <text>{{recordDuration}}s</text>
+      </view>
+
+      <!-- 录音按钮 -->
+      <view
+        class="record-btn {{recording ? 'recording' : ''}}"
+        bindtouchstart="startRecord"
+        bindtouchend="stopRecord"
+        bindtouchmove="onRecordMove"
+        bindtouchcancel="cancelRecord"
+      >
+        <text wx:if="{{!recording}}">按住说话</text>
+        <text wx:elif="{{canceling}}">松开取消</text>
+        <text wx:else>松开发送</text>
+      </view>
+
+      <!-- 提示文字 -->
+      <view class="record-hint">
+        <text wx:if="{{!recording}}">长按录音，最短1秒，最长60秒</text>
+        <text wx:elif="{{canceling}}">手指上滑取消录音</text>
+        <text wx:else>正在录音中...</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 操作菜单 -->
+<view wx:if="{{showActionSheet}}" class="action-sheet-mask" bindtap="hideActionSheet">
+  <view class="action-sheet" catchtap="stopPropagation">
+    <view class="action-sheet-title">操作</view>
+    <view class="action-sheet-item" bindtap="retryTranscription">
+      <text>🔄 重新转写</text>
+    </view>
+    <view class="action-sheet-item" bindtap="syncToFeishu">
+      <text>📄 同步到飞书</text>
+    </view>
+    <view class="action-sheet-item danger" bindtap="deleteRecord">
+      <text>🗑️ 删除</text>
+    </view>
+    <view class="action-sheet-cancel" bindtap="hideActionSheet">
+      <text>取消</text>
+    </view>
+  </view>
+</view>

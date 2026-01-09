@@ -1,0 +1,345 @@
+/* pages/settings-feishu/settings-feishu.wxss */
+.feishu-settings-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 头部 */
+.header {
+  display: flex;
+  align-items: center;
+  background-color: #4A90E2;
+  padding: 24rpx 32rpx;
+}
+
+.header-back {
+  font-size: 36rpx;
+  color: #FFFFFF;
+  margin-right: 24rpx;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+/* 内容区域 */
+.content {
+  flex: 1;
+  padding: 20rpx;
+}
+
+/* 分组 */
+.section {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+/* 开关项 */
+.switch-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch-label {
+  flex: 1;
+}
+
+.label-text {
+  display: block;
+  font-size: 30rpx;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.label-desc {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+/* 输入框 */
+.input-group {
+  margin-bottom: 32rpx;
+}
+
+.input-label {
+  display: block;
+  font-size: 28rpx;
+  color: #666666;
+  margin-bottom: 16rpx;
+}
+
+.input-box {
+  width: 100%;
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+}
+
+.input-box:focus {
+  border-color: #4A90E2;
+  background-color: #FFFFFF;
+}
+
+.input-hint {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.link {
+  color: #4A90E2;
+  margin-left: 8rpx;
+}
+
+/* 按钮 */
+.btn-block {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.btn-primary {
+  background-color: #4A90E2;
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  border: none;
+  font-size: 32rpx;
+}
+
+.btn-secondary {
+  background-color: #F0F0F0;
+  color: #333333;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  border: none;
+  font-size: 32rpx;
+}
+
+/* 测试结果 */
+.test-result {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.test-result.success {
+  background-color: rgba(82, 196, 26, 0.1);
+}
+
+.test-result.error {
+  background-color: rgba(255, 77, 79, 0.1);
+}
+
+.result-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+
+.test-result.success .result-icon {
+  color: #52C41A;
+}
+
+.test-result.error .result-icon {
+  color: #FF4D4F;
+}
+
+.result-text {
+  font-size: 28rpx;
+}
+
+/* 状态项 */
+.status-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+
+.status-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-text {
+  font-size: 30rpx;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+
+.status-desc {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+/* 同步选项 */
+.sync-options {
+  padding: 24rpx;
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+}
+
+.options-title {
+  display: block;
+  font-size: 28rpx;
+  color: #666666;
+  margin-bottom: 16rpx;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.checkbox-item text {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 帮助卡片 */
+.help-card {
+  padding: 24rpx;
+  background-color: #F8F8F8;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.help-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+.help-content {
+  display: block;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 40rpx;
+}
+
+.modal-content {
+  width: 100%;
+  max-height: 80vh;
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title {
+  padding: 32rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
+  border-bottom: 1rpx solid #EEEEEE;
+}
+
+.modal-body {
+  flex: 1;
+  padding: 32rpx;
+  overflow-y: auto;
+}
+
+.step-number {
+  display: inline-block;
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  background-color: #4A90E2;
+  color: #FFFFFF;
+  border-radius: 50%;
+  font-size: 24rpx;
+  font-weight: bold;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.step-text {
+  display: block;
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 24rpx;
+  padding-left: 64rpx;
+}
+
+.step-list {
+  display: block;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+  margin-left: 64rpx;
+  margin-bottom: 24rpx;
+  padding: 16rpx;
+  background-color: #F8F8F8;
+  border-radius: 8rpx;
+}
+
+.step-image {
+  width: 100%;
+  height: 300rpx;
+  background-color: #F0F0F0;
+  border-radius: 12rpx;
+  margin-bottom: 24rpx;
+}
+
+.modal-footer {
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #EEEEEE;
+  display: flex;
+  gap: 20rpx;
+}
+
+.modal-footer button {
+  flex: 1;
+}

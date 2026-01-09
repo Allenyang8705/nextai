@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>语音记录 - 小程序预览</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 667px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 顶部导航栏 */
+    .nav-bar {
+      background: #4A90E2;
+      color: #fff;
+      padding: 44px 15px 10px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    /* 页面容器 */
+    .page {
+      display: none;
+      height: calc(100% - 44px);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* 底部 Tab */
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: #fff;
+      border-top: 1px solid #eee;
+      display: flex;
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .tab-item.active {
+      color: #4A90E2;
+    }
+
+    /* 登录页 */
+    .login-page {
+      padding: 40px 30px;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .login-logo .icon {
+      width: 80px;
+      height: 80px;
+      background: #4A90E2;
+      border-radius: 20px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+
+    .login-tabs {
+      display: flex;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .login-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .login-tab.active {
+      color: #4A90E2;
+      border-bottom: 2px solid #4A90E2;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 15px;
+      font-size: 15px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #4A90E2;
+    }
+
+    .btn-primary {
+      width: 100%;
+      height: 48px;
+      background: #4A90E2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #3a7bc8;
+    }
+
+    /* 首页 */
+    .home-page {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .record-section {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .record-btn {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #4A90E2, #5BA3F5);
+      border-radius: 50%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .record-btn:active {
+      transform: scale(0.95);
+    }
+
+    .record-btn .icon {
+      font-size: 40px;
+      color: #fff;
+    }
+
+    .record-btn.recording {
+      animation: pulse 1s infinite;
+      background: linear-gradient(135deg, #E74C3C, #FF6B6B);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .record-hint {
+      margin-top: 15px;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .record-hint span {
+      color: #4A90E2;
+    }
+
+    .list-section {
+      flex: 1;
+      background: #f5f5f5;
+      border-radius: 20px 20px 0 0;
+      padding: 20px 15px 70px;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .list-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .list-count {
+      color: #999;
+      font-size: 13px;
+    }
+
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .record-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .record-play {
+      width: 40px;
+      height: 40px;
+      background: #4A90E2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .record-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .record-text {
+      font-size: 15px;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .record-text.pending {
+      color: #999;
+      font-style: italic;
+    }
+
+    .record-meta {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .record-status {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .record-status.success {
+      background: #E8F5E9;
+      color: #4CAF50;
+    }
+
+    .record-status.pending {
+      background: #FFF3E0;
+      color: #FF9800;
+    }
+
+    .record-status.failed {
+      background: #FFEBEE;
+      color: #F44336;
+    }
+
+    /* 设置页 */
+    .settings-page {
+      padding-bottom: 70px;
+    }
+
+    .user-card {
+      background: linear-gradient(135deg, #4A90E2, #5BA3F5);
+      padding: 30px 20px;
+      color: #fff;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .user-phone {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .settings-list {
+      background: #fff;
+      margin-top: 10px;
+    }
+
+    .settings-group {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .settings-group-title {
+      padding: 10px 20px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      cursor: pointer;
+    }
+
+    .settings-item:hover {
+      background: #f9f9f9;
+    }
+
+    .settings-item-icon {
+      width: 24px;
+      text-align: center;
+      margin-right: 12px;
+      font-size: 16px;
+    }
+
+    .settings-item-text {
+      flex: 1;
+      font-size: 15px;
+    }
+
+    .settings-item-arrow {
+      color: #ccc;
+    }
+
+    /* 页面切换按钮 */
+    .page-switcher {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+    }
+
+    .page-switcher button {
+      padding: 5px 10px;
+      margin-left: 5px;
+      border: 1px solid #4A90E2;
+      background: #fff;
+      color: #4A90E2;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .page-switcher button.active {
+      background: #4A90E2;
+      color: #fff;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- 页面切换器 -->
+    <div class="page-switcher">
+      <button onclick="showPage('login')" id="btn-login">登录页</button>
+      <button onclick="showPage('home')" id="btn-home" class="active">首页</button>
+      <button onclick="showPage('settings')" id="btn-settings">设置页</button>
+    </div>
+
+    <!-- 登录页 -->
+    <div class="page" id="page-login">
+      <div class="nav-bar">登录</div>
+      <div class="login-page">
+        <div class="login-logo">
+          <div class="icon">🎤</div>
+          <h2>语音记录</h2>
+          <p style="color:#999;margin-top:5px;">语音转文字，记录每一刻</p>
+        </div>
+
+        <div class="login-tabs">
+          <div class="login-tab active">手机号登录</div>
+          <div class="login-tab">邮箱登录</div>
+        </div>
+
+        <div class="form-group">
+          <input type="tel" class="form-input" placeholder="请输入手机号">
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-input" placeholder="请输入密码">
+        </div>
+        <button class="btn-primary">登录</button>
+
+        <p style="text-align:center;margin-top:20px;color:#999;font-size:14px;">
+          还没有账号？<span style="color:#4A90E2;">立即注册</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- 首页 -->
+    <div class="page active" id="page-home">
+      <div class="nav-bar">语音记录</div>
+      <div class="home-page">
+        <div class="record-section">
+          <div class="record-btn" id="recordBtn">
+            <span class="icon">🎤</span>
+          </div>
+          <p class="record-hint"><span>长按</span> 开始录音，松开发送</p>
+        </div>
+
+        <div class="list-section">
+          <div class="list-header">
+            <span class="list-title">我的录音</span>
+            <span class="list-count">共 3 条</span>
+          </div>
+
+          <div class="record-list">
+            <div class="record-item">
+              <div class="record-play">▶</div>
+              <div class="record-info">
+                <div class="record-text">今天天气真好，适合出去散步</div>
+                <div class="record-meta">
+                  <span>0:15</span>
+                  <span>刚刚</span>
+                  <span class="record-status success">已转写</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-play">▶</div>
+              <div class="record-info">
+                <div class="record-text">记得明天下午三点开会</div>
+                <div class="record-meta">
+                  <span>0:08</span>
+                  <span>10分钟前</span>
+                  <span class="record-status success">已转写</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="record-item">
+              <div class="record-play">▶</div>
+              <div class="record-info">
+                <div class="record-text pending">语音识别中...</div>
+                <div class="record-meta">
+                  <span>0:22</span>
+                  <span>1小时前</span>
+                  <span class="record-status pending">识别中</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item active">首页</div>
+        <div class="tab-item">设置</div>
+      </div>
+    </div>
+
+    <!-- 设置页 -->
+    <div class="page" id="page-settings">
+      <div class="nav-bar">设置</div>
+      <div class="settings-page">
+        <div class="user-card">
+          <div class="user-avatar">👤</div>
+          <div class="user-phone">138****8000</div>
+          <p style="opacity:0.8;font-size:13px;margin-top:5px;">已登录</p>
+        </div>
+
+        <div class="settings-list">
+          <div class="settings-group">
+            <div class="settings-item">
+              <span class="settings-item-icon">📘</span>
+              <span class="settings-item-text">飞书同步设置</span>
+              <span class="settings-item-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="settings-group-title">账号</div>
+          <div class="settings-group">
+            <div class="settings-item">
+              <span class="settings-item-icon">🔒</span>
+              <span class="settings-item-text">修改密码</span>
+              <span class="settings-item-arrow">›</span>
+            </div>
+            <div class="settings-item">
+              <span class="settings-item-icon">🚪</span>
+              <span class="settings-item-text" style="color:#F44336;">退出登录</span>
+            </div>
+          </div>
+
+          <div class="settings-group-title">录音设置</div>
+          <div class="settings-group">
+            <div class="settings-item">
+              <span class="settings-item-icon">🎵</span>
+              <span class="settings-item-text">语音质量</span>
+              <span class="settings-item-arrow">标准 ›</span>
+            </div>
+            <div class="settings-item">
+              <span class="settings-item-icon">🔊</span>
+              <span class="settings-item-text">播放模式</span>
+              <span class="settings-item-arrow">扬声器 ›</span>
+            </div>
+          </div>
+
+          <div class="settings-group-title">其他</div>
+          <div class="settings-group">
+            <div class="settings-item">
+              <span class="settings-item-icon">🗑️</span>
+              <span class="settings-item-text">清除缓存</span>
+              <span class="settings-item-arrow">0 B ›</span>
+            </div>
+            <div class="settings-item">
+              <span class="settings-item-icon">ℹ️</span>
+              <span class="settings-item-text">关于</span>
+              <span class="settings-item-arrow">v1.0.0 ›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item">首页</div>
+        <div class="tab-item active">设置</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showPage(page) {
+      // 隐藏所有页面
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.page-switcher button').forEach(b => b.classList.remove('active'));
+
+      // 显示选中页面
+      document.getElementById('page-' + page).classList.add('active');
+      document.getElementById('btn-' + page).classList.add('active');
+    }
+
+    // 录音按钮交互
+    let isRecording = false;
+    document.getElementById('recordBtn').addEventListener('mousedown', function() {
+      isRecording = true;
+      this.classList.add('recording');
+      this.querySelector('.icon').textContent = '⏸';
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (isRecording) {
+        isRecording = false;
+        const btn = document.getElementById('recordBtn');
+        btn.classList.remove('recording');
+        btn.querySelector('.icon').textContent = '🎤';
+      }
+    });
+  </script>
+</body>
+</html>
