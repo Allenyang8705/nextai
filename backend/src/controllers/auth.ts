@@ -194,6 +194,30 @@ export async function changePassword(req: Request, res: Response): Promise<void>
   }
 }
 
+// 处理头像URL - 将OSS路径转换为HTTP URL
+function processAvatarUrl(avatarUrl: string | null): string | null {
+  if (!avatarUrl) {
+    return null;
+  }
+
+  // 如果已经是完整的HTTP URL，直接返回
+  if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+    return avatarUrl;
+  }
+
+  // 如果是 OSS 路径格式，转换为 HTTP URL
+  if (avatarUrl.startsWith('oss://')) {
+    // 提取路径部分: oss://avatars/2/xxx.jpg -> avatars/2/xxx.jpg
+    const pathPart = avatarUrl.replace('oss://', '');
+    const serverUrl = process.env.SERVER_URL || `http://localhost:${config.port}`;
+    return `${serverUrl}/uploads/${pathPart}`;
+  }
+
+  // 其他情况，假设是相对路径
+  const serverUrl = process.env.SERVER_URL || `http://localhost:${config.port}`;
+  return `${serverUrl}/uploads/${avatarUrl}`;
+}
+
 // 获取当前用户信息
 export async function getCurrentUser(req: Request, res: Response): Promise<void> {
   try {
@@ -211,6 +235,14 @@ export async function getCurrentUser(req: Request, res: Response): Promise<void>
       throw new AppError(404, '用户不存在');
     }
 
+    // 处理头像URL
+    const processedAvatarUrl = processAvatarUrl(user.avatar_url);
+
+    logger.info('Processed avatar URL', {
+      original: user.avatar_url,
+      processed: processedAvatarUrl
+    });
+
     res.json({
       success: true,
       data: {
@@ -218,7 +250,7 @@ export async function getCurrentUser(req: Request, res: Response): Promise<void>
           id: user.id,
           phone: user.phone,
           email: user.email,
-          avatarUrl: user.avatar_url,
+          avatarUrl: processedAvatarUrl,
           createdAt: user.created_at,
         },
       },
