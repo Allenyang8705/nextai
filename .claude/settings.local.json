@@ -19,7 +19,12 @@
       "Bash(cat:*)",
       "Bash(wmic:*)",
       "Bash(npx tsx:*)",
-      "Bash(mysql:*)"
+      "Bash(mysql:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(tree:*)"
     ]
   }
 }
