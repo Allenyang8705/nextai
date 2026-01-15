@@ -154,14 +154,24 @@ export async function appendToFeishuDoc(
     }
 
     const items = blocksResponse.data.data?.items || [];
-    const lastBlockId = items.length > 0 ? items[items.length - 1].block_id : null;
 
-    logger.info('Last block ID', { blockId: lastBlockId, hasItems: items.length > 0 });
+    // 飞书文档的块结构：Document -> Page -> Blocks
+    // 第一个块通常是 Page 块，我们在这个 Page 块中插入内容
+    const pageBlockId = items.length > 0 ? items[0].block_id : config.documentId;
 
-    // 2. 创建文本块并追加到文档
+    logger.info('Document blocks retrieved', {
+      totalBlocks: items.length,
+      hasItems: items.length > 0,
+      pageBlockId,
+      firstBlockType: items.length > 0 ? items[0].block_type : 'N/A',
+      firstBlockId: items.length > 0 ? items[0].block_id : 'N/A'
+    });
+
+    // 2. 创建文本块并插入到页面开头
     let appendResponse;
     try {
       // 使用正确的 API 格式创建文本块
+      // index=0 应该表示在第一个位置插入（页面开头），-1 表示在末尾追加
       const blockData = {
         children: [
           {
@@ -177,11 +187,17 @@ export async function appendToFeishuDoc(
             }
           }
         ],
-        index: -1
+        index: 0 // 在页面最前面插入
       };
 
-      // 使用文档 ID 作为父块 ID
-      const endpoint = `https://open.feishu.cn/open-apis/docx/v1/documents/${config.documentId}/blocks/${config.documentId}/children`;
+      logger.info('Creating block with data', {
+        index: blockData.index,
+        childrenCount: blockData.children.length,
+        blockType: blockData.children[0].block_type
+      });
+
+      // 在页面块中插入子块
+      const endpoint = `https://open.feishu.cn/open-apis/docx/v1/documents/${config.documentId}/blocks/${pageBlockId}/children`;
 
       appendResponse = await axios.post(
         endpoint,
@@ -198,6 +214,7 @@ export async function appendToFeishuDoc(
         status: appendResponse.status,
         code: appendResponse.data.code,
         msg: appendResponse.data.msg,
+        responseData: JSON.stringify(appendResponse.data.data)
       });
     } catch (error: any) {
       logger.error('Failed to append content', {

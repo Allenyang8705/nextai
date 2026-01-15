@@ -196,7 +196,7 @@ Page({
 
         // 延迟跳转
         setTimeout(() => {
-          wx.switchTab({
+          wx.reLaunch({
             url: '/pages/index/index',
           });
         }, 1500);
@@ -282,7 +282,7 @@ Page({
 
         // 延迟跳转
         setTimeout(() => {
-          wx.switchTab({
+          wx.reLaunch({
             url: '/pages/index/index',
           });
         }, 1500);
