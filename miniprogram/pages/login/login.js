@@ -154,12 +154,20 @@ Page({
 
     // 验证
     if (!account) {
-      wx.showToast({ title: '请输入手机号或邮箱', icon: 'none' });
+      wx.showToast({
+        title: '请输入手机号或邮箱',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
     if (!password) {
-      wx.showToast({ title: '请输入密码', icon: 'none' });
+      wx.showToast({
+        title: '请输入密码',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
@@ -180,17 +188,22 @@ Page({
           wx.removeStorageSync('savedAccount');
         }
 
-        wx.showToast({ title: '登录成功', icon: 'success' });
+        wx.showToast({
+          title: '登录成功',
+          icon: 'success',
+          duration: 1500
+        });
 
         // 延迟跳转
         setTimeout(() => {
-          wx.redirectTo({
+          wx.switchTab({
             url: '/pages/index/index',
           });
-        }, 1000);
+        }, 1500);
       }
     }).catch((error) => {
       console.error('登录失败:', error);
+      // 错误已经在 request.js 中统一处理
     }).finally(() => {
       this.setData({ loading: false });
     });
@@ -202,30 +215,50 @@ Page({
 
     // 验证手机号
     if (!phone) {
-      wx.showToast({ title: '请输入手机号', icon: 'none' });
+      wx.showToast({
+        title: '请输入手机号',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
     if (!this.validatePhone(phone)) {
-      wx.showToast({ title: '手机号格式不正确', icon: 'none' });
+      wx.showToast({
+        title: '手机号格式不正确',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
     // 验证邮箱（选填）
     if (email && !this.validateEmail(email)) {
-      wx.showToast({ title: '邮箱格式不正确', icon: 'none' });
+      wx.showToast({
+        title: '邮箱格式不正确',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
     // 验证密码
     const passwordCheck = this.validatePassword(password);
     if (!passwordCheck.valid) {
-      wx.showToast({ title: passwordCheck.message, icon: 'none' });
+      wx.showToast({
+        title: passwordCheck.message,
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
     // 验证确认密码
     if (password !== confirmPassword) {
-      wx.showToast({ title: '两次密码不一致', icon: 'none' });
+      wx.showToast({
+        title: '两次密码不一致',
+        icon: 'none',
+        duration: 2000
+      });
       return;
     }
 
@@ -241,17 +274,22 @@ Page({
         // 保存登录信息
         app.setLoginInfo(res.data.token, res.data.user);
 
-        wx.showToast({ title: '注册成功', icon: 'success' });
+        wx.showToast({
+          title: '注册成功',
+          icon: 'success',
+          duration: 1500
+        });
 
         // 延迟跳转
         setTimeout(() => {
-          wx.redirectTo({
+          wx.switchTab({
             url: '/pages/index/index',
           });
-        }, 1000);
+        }, 1500);
       }
     }).catch((error) => {
       console.error('注册失败:', error);
+      // 错误已经在 request.js 中统一处理
     }).finally(() => {
       this.setData({ loading: false });
     });

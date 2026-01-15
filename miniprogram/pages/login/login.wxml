@@ -35,8 +35,12 @@
           class="input-box"
           type="text"
           placeholder="请输入手机号或邮箱"
+          placeholder-class="input-placeholder"
           value="{{loginForm.account}}"
           bindinput="onLoginAccountInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
+          confirm-type="done"
         />
       </view>
 
@@ -46,8 +50,12 @@
           class="input-box"
           type="{{showPassword ? 'text' : 'password'}}"
           placeholder="请输入密码"
+          placeholder-class="input-placeholder"
           value="{{loginForm.password}}"
           bindinput="onLoginPasswordInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
+          confirm-type="done"
         />
         <view class="eye-icon" bindtap="togglePassword">
           <text>{{showPassword ? '🙈' : '👁️'}}</text>
@@ -72,8 +80,12 @@
           class="input-box"
           type="number"
           placeholder="请输入手机号"
+          placeholder-class="input-placeholder"
           value="{{registerForm.phone}}"
           bindinput="onRegisterPhoneInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
+          maxlength="11"
         />
       </view>
 
@@ -83,8 +95,11 @@
           class="input-box"
           type="text"
           placeholder="请输入邮箱"
+          placeholder-class="input-placeholder"
           value="{{registerForm.email}}"
           bindinput="onRegisterEmailInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
         />
       </view>
 
@@ -94,8 +109,11 @@
           class="input-box"
           type="{{showPassword ? 'text' : 'password'}}"
           placeholder="至少8位，包含字母和数字"
+          placeholder-class="input-placeholder"
           value="{{registerForm.password}}"
           bindinput="onRegisterPasswordInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
         />
       </view>
 
@@ -105,8 +123,12 @@
           class="input-box"
           type="{{showPassword ? 'text' : 'password'}}"
           placeholder="请再次输入密码"
+          placeholder-class="input-placeholder"
           value="{{registerForm.confirmPassword}}"
           bindinput="onRegisterConfirmPasswordInput"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
+          confirm-type="done"
         />
         <view class="eye-icon" bindtap="togglePassword">
           <text>{{showPassword ? '🙈' : '👁️'}}</text>
